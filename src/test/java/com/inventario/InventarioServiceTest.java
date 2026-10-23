@@ -154,5 +154,55 @@ void testVentaNegativaSinCambios() {
 }
 
 
+@Test
+void testVenderProductoExitosamente() {
+    InventarioService servicio =
+        new InventarioService(new RepositorioMemoria());
+
+    servicio.registrarProducto(
+        new Producto("P001", "Laptop", 10, 5000)
+    );
+
+    servicio.venderProducto("P001", 3);
+
+    Producto producto = servicio.buscarProducto("P001")
+        .orElseThrow();
+
+    assertEquals(7, producto.existencias());
+}
+
+
+@Test
+void testVenderProductoSinExistenciasSuficientes() {
+    InventarioService servicio =
+        new InventarioService(new RepositorioMemoria());
+
+    servicio.registrarProducto(
+        new Producto("P001", "Laptop", 5, 5000)
+    );
+
+    assertThrows(IllegalArgumentException.class, () -> {
+        servicio.venderProducto("P001", 10);
+    });
+
+    assertEquals(5,
+        servicio.buscarProducto("P001")
+            .orElseThrow().existencias());
+}
+
+
+@Test
+void testVenderProductoInexistente() {
+    InventarioService servicio =
+        new InventarioService(new RepositorioMemoria());
+
+    IllegalArgumentException error = assertThrows(
+        IllegalArgumentException.class,
+        () -> servicio.venderProducto("NO_EXISTE", 1)
+    );
+
+    assertEquals("Producto no encontrado", error.getMessage());
+}
+
 }
 

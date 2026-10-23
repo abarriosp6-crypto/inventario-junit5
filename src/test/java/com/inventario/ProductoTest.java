@@ -119,4 +119,40 @@ class ValidacionesProducto {
         assertEquals(10, producto.existencias());
     }
 }
+
+@Test
+void productoConCodigoVacioDebeFallar() {
+    IllegalArgumentException error = assertThrows(
+        IllegalArgumentException.class,
+        () -> new Producto("", "Teclado", 10, 75.0)
+    );
+
+    assertEquals("Código obligatorio", error.getMessage());
+}
+
+@Test
+void productoConCodigoNuloDebeFallar() {
+    assertThrows(IllegalArgumentException.class,
+        () -> new Producto(null, "Teclado", 10, 75.0));
+}
+
+@Test
+void productoConNombreNuloDebeFallar() {
+    assertThrows(IllegalArgumentException.class,
+        () -> new Producto("P01", null, 10, 75.0));
+}
+
+@Test
+void productoConPrecioNegativoDebeFallar() {
+    assertThrows(IllegalArgumentException.class,
+        () -> new Producto("P01", "Teclado", 10, -10.0));
+}
+
+@Test
+void productoConPrecioInfinitoDebeFallar() {
+    assertThrows(IllegalArgumentException.class,
+        () -> new Producto("P01", "Teclado", 10,
+            Double.POSITIVE_INFINITY));
+}
+
 }
